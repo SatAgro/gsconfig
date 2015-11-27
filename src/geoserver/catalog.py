@@ -768,12 +768,12 @@ class Catalog(object):
         groups = self.get_xml(groups_url)
         return [LayerGroup(self, g.find("name").text, wks_name) for g in groups.findall("layerGroup")]
 
-    def create_layergroup(self, name, layers = (), styles = (), bounds = None, workspace = None):
+    def create_layergroup(self, name, layers = (), styles = (), bounds = None, workspace = None, mode = LayerGroup.Mode.SINGLE):
         if any(g.name == name for g in self.get_layergroups()):
             raise ConflictingDataError("LayerGroup named %s already exists!" % name)
         else:
             return UnsavedLayerGroup(self, name, layers, styles, bounds,
-                                     workspace)
+                                     workspace, mode)
 
     def get_style(self, name, workspace=None):
         '''Find a Style in the catalog if one exists that matches the given name.

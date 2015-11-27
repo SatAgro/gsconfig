@@ -50,17 +50,27 @@ def _write_styles(builder, styles):
 class LayerGroup(ResourceInfo):
     """    Represents a layer group in geoserver 
     """
+    
+    class Mode():
+		""" 	Layer group modes (Single, Named Tree, Container Tree, Earth Observation Tree)
+		"""
+		
+        SINGLE = 'SINGLE'
+        NAMED =  'NAMED'
+        CONTAINER = 'CONTAINER'
+        EO = 'EO'
 
     resource_type = "layerGroup"
     save_method = "PUT"
 
-    def __init__(self, catalog, name, workspace=None):
+    def __init__(self, catalog, name, workspace=None, mode=Mode.SINGLE):
         super(LayerGroup, self).__init__()
 
         assert isinstance(name, basestring)
 
         self.catalog = catalog
         self.name = name
+        self.mode = mode
         self.workspace = workspace
 
         # the XML format changed in 2.3.x - the element listing all the layers
@@ -77,7 +87,8 @@ class LayerGroup(ResourceInfo):
             styles = _write_styles,
             layers = lambda b,l: _write_layers(b, l, parent, element, attributes),
             bounds = write_bbox("bounds"),
-            workspace = write_string("workspace")
+            workspace = write_string("workspace"),
+            mode = write_string("mode")
         )
 
     @property
@@ -115,11 +126,11 @@ class LayerGroup(ResourceInfo):
 
 class UnsavedLayerGroup(LayerGroup):
     save_method = "POST"
-    def __init__(self, catalog, name, layers, styles, bounds, workspace = None):
+    def __init__(self, catalog, name, layers, styles, bounds, workspace = None, mode=LayerGroup.Mode.SINGLE):
         super(UnsavedLayerGroup, self).__init__(catalog, name, workspace=workspace)
         bounds = bounds if bounds is not None else ("-180","180","-90","90","EPSG:4326")
         self.dirty.update(name = name, layers = layers, styles = styles,
-                          bounds = bounds, workspace = workspace)
+                          bounds = bounds, workspace = workspace, mode=mode)
 
     @property
     def href(self):
