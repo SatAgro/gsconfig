@@ -25,6 +25,7 @@ The project committers:
 * `Tyler Garner <https://github.com/garnertb>`_
 * `Alessio Fabiani <https://github.com/afabiani>`_
 * `Victor Olaya <https://github.com/volaya>`_ (Boundless)
+* `Krzysztof Stopa <https://github.com/kstopa>`_ (SatAgro)
 
 This is a small project that communicates via pull request.
 
