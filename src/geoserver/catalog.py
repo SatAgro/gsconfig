@@ -768,12 +768,23 @@ class Catalog(object):
         groups = self.get_xml(groups_url)
         return [LayerGroup(self, g.find("name").text, wks_name) for g in groups.findall("layerGroup")]
 
-    def create_layergroup(self, name, layers = (), styles = (), bounds = None, workspace = None, mode = LayerGroup.Mode.SINGLE):
+    def create_layergroup(self, name, layers = (), styles = (), bounds = None, workspace = None, title = None, abstract = None, mode = LayerGroup.Mode.SINGLE):
+        '''Crete new layer group based on given layers and styles
+
+        :param name: Name of the layer group.
+        :param layers: list with layers names that conforms the group.
+        :param styles: list with sytles names to style each layer.
+        :param bounds: layer group extension. By default is set to "-180","180","-90","90","EPSG:4326"
+        :param workspace: workspace name where layer group will be set.
+        :param title: Title of the layer group. Available for GeoServer 2.4 or above.
+        :param abstract: Description of the layer group. Available for GeoServer 2.4 or above.
+        :param mode: Layer group publishing mode (Single, Named Tree, Container Tree, Earth Observation Tree). Available for GeoServer 2.4 or above.
+        '''
         if any(g.name == name for g in self.get_layergroups()):
             raise ConflictingDataError("LayerGroup named %s already exists!" % name)
         else:
             return UnsavedLayerGroup(self, name, layers, styles, bounds,
-                                     workspace, mode)
+                                     workspace, title, abstract, mode)
 
     def get_style(self, name, workspace=None):
         '''Find a Style in the catalog if one exists that matches the given name.

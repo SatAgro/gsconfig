@@ -50,26 +50,24 @@ def _write_styles(builder, styles):
 class LayerGroup(ResourceInfo):
     """    Represents a layer group in geoserver 
     """
-    
+
+    resource_type = "layerGroup"
+    save_method = "PUT"
     class Mode():
-		""" 	Layer group modes (Single, Named Tree, Container Tree, Earth Observation Tree)
-		"""
-		
         SINGLE = 'SINGLE'
         NAMED =  'NAMED'
         CONTAINER = 'CONTAINER'
         EO = 'EO'
 
-    resource_type = "layerGroup"
-    save_method = "PUT"
-
-    def __init__(self, catalog, name, workspace=None, mode=Mode.SINGLE):
+    def __init__(self, catalog, name, workspace=None, title=None, abstractTxt=None, mode=Mode.SINGLE):
         super(LayerGroup, self).__init__()
 
         assert isinstance(name, basestring)
 
         self.catalog = catalog
         self.name = name
+        self.title = title
+        self.abstractTxt = abstractTxt
         self.mode = mode
         self.workspace = workspace
 
@@ -84,6 +82,8 @@ class LayerGroup(ResourceInfo):
         self._layer_attributes = attributes
         self.writers = dict(
             name = write_string("name"),
+            title = write_string("title"),
+            abstractTxt = write_string("abstractTxt"),
             styles = _write_styles,
             layers = lambda b,l: _write_layers(b, l, parent, element, attributes),
             bounds = write_bbox("bounds"),
@@ -126,11 +126,11 @@ class LayerGroup(ResourceInfo):
 
 class UnsavedLayerGroup(LayerGroup):
     save_method = "POST"
-    def __init__(self, catalog, name, layers, styles, bounds, workspace = None, mode=LayerGroup.Mode.SINGLE):
+    def __init__(self, catalog, name, layers, styles, bounds, workspace = None, title = None, abstractTxt=None, mode=LayerGroup.Mode.SINGLE):
         super(UnsavedLayerGroup, self).__init__(catalog, name, workspace=workspace)
         bounds = bounds if bounds is not None else ("-180","180","-90","90","EPSG:4326")
         self.dirty.update(name = name, layers = layers, styles = styles,
-                          bounds = bounds, workspace = workspace, mode=mode)
+                          bounds = bounds, workspace = workspace, title=title, abstractTxt=abstractTxt, mode=mode)
 
     @property
     def href(self):
