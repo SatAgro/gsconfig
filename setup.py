@@ -4,12 +4,13 @@
 from setuptools import setup, find_packages
 
 try:
-    readme_text = file('README.rst', 'rb').read()
-except IOError,e:
+    with open('README.rst', 'r') as readme:
+        readme_text = readme.read()
+except IOError as e:
     readme_text = ''
 
 setup(name = "gsconfig",
-    version = "1.0.6",
+    version = "1.0.6.2",
     description = "GeoServer REST Configuration",
     long_description = readme_text,
     keywords = "GeoServer REST Configuration",
